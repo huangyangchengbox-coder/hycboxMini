@@ -58,13 +58,13 @@ function buildAllRooms() {
     phases.forEach(phase => {
       phase.buildings.forEach(building => {
         const skipFloors = building.skipFloors || DEFAULT_SKIP_FLOORS
-        for (let unit = 1; unit <= building.units; unit += 1) {
-          for (let floor = 1; floor <= building.maxFloor; floor += 1) {
-            if (skipFloors.indexOf(floor) >= 0) {
-              continue
-            }
-            for (let roomIndex = 1; roomIndex <= building.roomsPerFloor; roomIndex += 1) {
-              const roomNo = formatRoomNo(floor, roomIndex)
+        for (let floor = 1; floor <= building.maxFloor; floor += 1) {
+          if (skipFloors.indexOf(floor) >= 0) {
+            continue
+          }
+          for (let roomIndex = 1; roomIndex <= building.roomsPerFloor; roomIndex += 1) {
+            const unit = homeUnit(building.units, building.roomsPerFloor, roomIndex)
+            const roomNo = formatRoomNo(floor, roomIndex)
               const id = isDefault
                 ? `${phase.id}_${building.id}_${unit}_${roomNo}`
                 : `${community.id}_${phase.id}_${building.id}_${unit}_${roomNo}`
@@ -83,7 +83,6 @@ function buildAllRooms() {
                 label,
                 searchKey: searchKey.toLowerCase()
               })
-            }
           }
         }
       })
@@ -91,6 +90,12 @@ function buildAllRooms() {
   })
   roomCache = rooms
   return rooms
+}
+
+function homeUnit(units, roomsPerFloor, roomIndex) {
+  if (units <= 1) return 1
+  const right = roomsPerFloor >= 4 ? (roomIndex === 2 || roomIndex === 4) : roomIndex === 2
+  return right ? 2 : 1
 }
 
 function getPhases(communityId) {
