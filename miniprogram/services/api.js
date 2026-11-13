@@ -143,15 +143,8 @@ const api = {
     })
   },
 
-  /** 按票据前缀选择 API：t=体验，p=正式，避免扫错环境报「票据不存在」 */
-  apiBaseForTicket(ticket) {
-    const t = (ticket || '').trim()
-    if (t.charAt(0) === 't') {
-      return config.trialApi
-    }
-    if (t.charAt(0) === 'p') {
-      return config.prodApi
-    }
+  /** 体验版和正式版共用正式服务，扫码不再按票据前缀分库 */
+  apiBaseForTicket() {
     return config.baseUrl
   },
 
